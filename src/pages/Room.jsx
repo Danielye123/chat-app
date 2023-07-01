@@ -27,6 +27,8 @@ const Room = () => {
 
         console.log(response)
 
+        setMessages(prevState => [response, ...messages])
+
         setMessageBody('')
     }
 
