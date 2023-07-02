@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { databases, DATABASE_ID, COLLECTION_ID_MESSAGES } from '../appwriteConfig';
 import { ID, Query } from "appwrite";
+import { Trash2 } from "react-feather";
 
 const Room = () => {
 
@@ -45,6 +46,11 @@ const Room = () => {
         setMessages(response.documents)
     }
 
+    const deleteMessage = async (message_id) => {
+        databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
+        setMessages(prevState => messages.filter(message => message.$id !== message_id))
+    } 
+
     return (
         <main className="container">
 
@@ -74,8 +80,13 @@ const Room = () => {
 
                             <div className="message--header">
                                 <small className="message-timestamp">
-                                    {message.$createdAt}
+                                    {new Date(message.$createdAt).toLocaleString()}
                                 </small>
+
+                                <Trash2 
+                                onClick={() => {deleteMessage(message.$id)}} 
+                                className="delete--btn"
+                                />
                             </div>
 
                             <div className="message--body">
