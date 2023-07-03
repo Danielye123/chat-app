@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import { databases, DATABASE_ID, COLLECTION_ID_MESSAGES } from '../appwriteConfig';
+import React, { useState, useEffect } from 'react'
+import client, { databases, DATABASE_ID, COLLECTION_ID_MESSAGES } from '../appwriteConfig';
 import { ID, Query } from "appwrite";
 import { Trash2 } from "react-feather";
 
@@ -7,11 +7,28 @@ const Room = () => {
 
     const [messages, setMessages] = useState([])
     const [messageBody, setMessageBody] = useState('')
-    
+
     useEffect(() => {
-      getMessages()
+        getMessages()
+        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`, response => {
+            // Callback will be executed on changes for documents A and all files.
+            
+            if(response.events.includes("databases.*.collections.*.documents.*.create")){
+                console.log('A message was created!')
+                setMessages(prevState => [response.payload, ...prevState])
+            }
+            if(response.events.includes("databases.*.collections.*.documents.*.delete")){
+                console.log('A message was deleted!')
+                setMessages(prevState => prevState.filter(message => message.$id !== response.payload.$id))
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        }
+
     }, [])
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -28,51 +45,51 @@ const Room = () => {
 
         console.log(response)
 
-        setMessages(prevState => [response, ...messages])
+        // setMessages(prevState => [response, ...messages])
 
         setMessageBody('')
     }
 
     const getMessages = async () => {
         const response = await databases.listDocuments(
-            DATABASE_ID, 
+            DATABASE_ID,
             COLLECTION_ID_MESSAGES,
             [
                 Query.orderDesc('$createdAt'),
                 Query.limit(20) // for pagination
             ]
-            )
+        )
         console.log('RESPONSE:', response)
         setMessages(response.documents)
     }
 
     const deleteMessage = async (message_id) => {
         databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
-        setMessages(prevState => messages.filter(message => message.$id !== message_id))
-    } 
+        // setMessages(prevState => messages.filter(message => message.$id !== message_id))
+    }
 
     return (
         <main className="container">
 
             <div className="room--container">
 
-            <form onSubmit={handleSubmit} id="message--form">
-                <div>
-                    <textarea
-                        required
-                        maxLength="1000"
-                        placeholder="Say something..."
-                        onChange={(e) => {setMessageBody(e.target.value)}}
-                        value={messageBody}
-                    >
-                        
-                    </textarea>
-                </div>
+                <form onSubmit={handleSubmit} id="message--form">
+                    <div>
+                        <textarea
+                            required
+                            maxLength="1000"
+                            placeholder="Say something..."
+                            onChange={(e) => { setMessageBody(e.target.value) }}
+                            value={messageBody}
+                        >
 
-                <div className="send-btn--wrapper">
-                    <input className="btn btn--secondary" type="submit" value="send" />
-                </div>
-            </form>
+                        </textarea>
+                    </div>
+
+                    <div className="send-btn--wrapper">
+                        <input className="btn btn--secondary" type="submit" value="send" />
+                    </div>
+                </form>
 
                 <div>
                     {messages.map(message => (
@@ -83,9 +100,9 @@ const Room = () => {
                                     {new Date(message.$createdAt).toLocaleString()}
                                 </small>
 
-                                <Trash2 
-                                onClick={() => {deleteMessage(message.$id)}} 
-                                className="delete--btn"
+                                <Trash2
+                                    onClick={() => { deleteMessage(message.$id) }}
+                                    className="delete--btn"
                                 />
                             </div>
 
