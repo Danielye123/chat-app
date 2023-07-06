@@ -13,7 +13,21 @@ const LoginPage = () => {
   }, [])
   
   return (
-    <div>LOGIN</div>
+    <div className="auth--container">
+      <div className="form--wrapper">
+        <form>
+          <div className="field--wrapper">
+            <label>Email:</label>
+            <input 
+              type="email"
+              required
+              name="email"
+              placeholder="Enter your email..."
+            />
+          </div>
+        </form>
+      </div>
+    </div>
   )
 }
 
