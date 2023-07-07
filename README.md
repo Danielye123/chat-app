@@ -6,6 +6,16 @@ A real-time chat application built with React, React Router DOM, Appwrite, and V
 
 The Chat App is a web-based application that allows users to engage in real-time messaging with other users. It provides a simple and intuitive interface for sending and receiving messages, creating chat rooms, and joining existing rooms.
 
+Chat:
+![image](https://github.com/Danielye123/chat-app/assets/73367368/1044f4b0-14fd-48c2-9c99-fc59ebc15e7e)
+
+Login:
+![image](https://github.com/Danielye123/chat-app/assets/73367368/bde61560-b02f-451c-a152-b7b18618b681)
+
+Register:
+![image](https://github.com/Danielye123/chat-app/assets/73367368/9ecb6f21-0cf8-41c7-a706-c7e18627b028)
+
+
 ## Features
 
 - Real-time messaging: Users can send and receive messages in real-time without the need to refresh the page.
