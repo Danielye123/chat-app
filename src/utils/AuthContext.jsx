@@ -49,6 +49,11 @@ export const AuthProvider = ({children}) => {
     const handleUserRegister = async (e, credentials) => {
         e.preventDefault()
 
+        if (credentials.password1.length < 8) {
+            alert("Password is too short. It should be at least 8 characters long.");
+            return;
+        }
+
         if(credentials.password1 !== credentials.password2){
             alert('Passwords do not match!')
             return
